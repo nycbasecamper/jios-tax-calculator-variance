@@ -1,0 +1,58 @@
+image: maven:3.8-openjdk-17
+pipelines:
+  branches:
+    dev:  
+      - step:
+          name: Build and Deploy JIOS TaxCalculator - Variance to EC2
+          deployment: ec2-tax-calculator
+          script:
+            # Verify SSH connection
+            - ssh -o StrictHostKeyChecking=no ec2-user@$EC2_HOST 'echo "SSH connection successful"'
+            
+            # Run deployment commands on EC2
+            - |
+              ssh -o StrictHostKeyChecking=no ec2-user@$EC2_HOST << 'EOF'
+                set -e  # Exit immediately if any command fails
+                
+                
+                # Ensure the repository is up to date
+                if [ ! -d ".git" ]; then
+                  echo "Repository not initialized. Cloning repository..."
+                  rm -rf /home/ec2-user/app/jios-taxCalculator-variance
+                  git clone -b dev git@bitbucket.org:vibrantech/jios-taxcalculator-variance.git /home/ec2-user/app/jios-taxCalculator-variance
+                fi
+                
+                # Navigate to the application directory
+                cd /home/ec2-user/app/jios-taxCalculator-variance
+                
+                git status
+                git checkout dev
+                git pull origin dev
+                
+                # Navigate to ecm-parentMaven (ensure it exists after the pull)
+                if [ ! -d "ecm-parentMaven" ]; then
+                  echo "Directory ecm-parentMaven not found! Aborting deployment."
+                  exit 1
+                fi
+                
+                cd ecm-parentMaven
+                
+                # Verify the presence of pom.xml
+                if [ ! -f pom.xml ]; then
+                  echo "pom.xml not found in ecm-parentMaven! Aborting build."
+                  exit 1
+                fi
+                
+                # Build the Maven project and skip tests
+                mvn clean package -DskipTests
+                
+                # Verify if the JAR file exists
+                if [ ! -f jios-taxcalculator-variance/target/jios-taxCalculator-variance-1.0.0.jar ]; then
+                    echo "Build failed: JAR file not found in target directory!"
+                    exit 1
+                fi
+                
+                # Restart the Spring Boot service
+                sudo systemctl restart jios-variance.service
+                echo "Deployment of JIOS TaxCalculator - Variance completed successfully!!!"
+              EOF

@@ -1,0 +1,85 @@
+{
+  "validation": {
+    "header": {
+      "mandatory": true,
+      "type": "object",
+      "properties": {
+        "taxPrd": {
+          "mandatory": true,
+          "field-type": "number",
+          "pattern": "^\\d{6}$"
+        },
+        "mftCd": {
+          "mandatory": true,
+          "field-type": "number",
+          "pattern": "^\\d{2}$"
+        },
+        "uniqueCalculationId": {
+          "mandatory": true,
+          "field-type": "alphanumeric"
+        },
+        "calcDt": {
+          "mandatory": true,
+          "field-type": "date",
+          "format": "M/d/uuuu"
+        },
+        "submitterId": {
+          "field-type": "alphanumeric"
+        },
+        "calcTypeTxt": {
+          "mandatory": true,
+          "allowed-values": ["Total", "Partial"]
+        },
+        "stripPIIInd": {
+          "allowed-values": ["Y","N"]
+        }
+      }
+    },
+    "body": {
+      "mandatory": true,
+      "type": "object",
+      "properties": {
+        "forms": {
+          "mandatory": true,
+          "type": "array",
+          "min-items": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "formNum": {
+                "mandatory": true,
+                "field-type": "alphanumeric"
+              },
+              "lineItems": {
+                "mandatory": true,
+                "type": "array",
+                "min-items": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "lineNameTxt": {
+                      "mandatory": true,
+                      "field-type": "string"
+                    },
+                    "perReturnValueTxt": {
+                      "mandatory": true,
+                      "field-type": "number"
+                    },
+                    "totalAdjustmentValueTxt": {
+                      "mandatory": true,
+                      "field-type": "number"
+                    },
+                    "agreedAdjustmentValueTxt": {
+                      "mandatory": true,
+                      "field-type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

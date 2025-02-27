@@ -1,0 +1,57 @@
+2025-02-05 17:53:28.357 [background-preinit] INFO  o.h.validator.internal.util.Version [] - HV000001: Hibernate Validator 8.0.1.Final
+2025-02-05 17:53:28.617 [main] INFO  g.i.j.JetcsServiceHandlerApplication [] - Starting JetcsServiceHandlerApplication using Java 23 with PID 37804 (C:\Users\DillonGinley\IdeaProjects\IRS_JETCS_jios-taxCalculator-variance-develop\ecm-parentMaven\jios-taxCalculator-variance\target\jios-taxCalculator-variance-1.0.0.jar started by DillonGinley in C:\Users\DillonGinley\IdeaProjects\IRS_JETCS_jios-taxCalculator-variance-develop)
+2025-02-05 17:53:28.622 [main] DEBUG g.i.j.JetcsServiceHandlerApplication [] - Running with Spring Boot v3.2.4, Spring v6.1.5
+2025-02-05 17:53:28.627 [main] INFO  g.i.j.JetcsServiceHandlerApplication [] - No active profile set, falling back to 1 default profile: "default"
+2025-02-05 17:53:37.679 [main] INFO  o.s.cloud.context.scope.GenericScope [] - BeanFactory id=75982fe9-9d36-3e82-a537-74f27f13415e
+2025-02-05 17:53:42.661 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer [] - Tomcat initialized with port 8080 (http)
+2025-02-05 17:53:42.713 [main] INFO  o.a.coyote.http11.Http11NioProtocol [] - Initializing ProtocolHandler ["http-nio-8080"]
+2025-02-05 17:53:42.727 [main] INFO  o.a.catalina.core.StandardService [] - Starting service [Tomcat]
+2025-02-05 17:53:42.728 [main] INFO  o.a.catalina.core.StandardEngine [] - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-02-05 17:53:42.966 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] [] - Initializing Spring embedded WebApplicationContext
+2025-02-05 17:53:42.966 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext [] - Root WebApplicationContext: initialization completed in 13569 ms
+2025-02-05 17:53:45.818 [main] INFO  g.i.j.c.validation.GenericValidator [] - Validation rules loaded successfully
+2025-02-05 17:53:49.185 [main] INFO  g.i.j.c.validation.GenericValidator [] - Validation rules loaded successfully
+2025-02-05 17:53:49.385 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext [] - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'varianceAnalysisController': Injection of autowired dependencies failed
+2025-02-05 17:53:51.550 [main] INFO  o.a.catalina.core.StandardService [] - Stopping service [Tomcat]
+2025-02-05 17:53:51.659 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger [] - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-02-05 17:53:51.741 [main] ERROR o.s.boot.SpringApplication [] - Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'varianceAnalysisController': Injection of autowired dependencies failed
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:514)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1419)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:599)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:975)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:962)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:624)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:334)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1343)
+	at gov.irs.jios.JetcsServiceHandlerApplication.main(JetcsServiceHandlerApplication.java:30)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:91)
+	at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:53)
+	at org.springframework.boot.loader.launch.JarLauncher.main(JarLauncher.java:58)
+Caused by: java.lang.IllegalArgumentException: Could not resolve placeholder 'spring.profiles.active' in value "${spring.profiles.active}"
+	at org.springframework.util.PropertyPlaceholderHelper.parseStringValue(PropertyPlaceholderHelper.java:180)
+	at org.springframework.util.PropertyPlaceholderHelper.replacePlaceholders(PropertyPlaceholderHelper.java:126)
+	at org.springframework.core.env.AbstractPropertyResolver.doResolvePlaceholders(AbstractPropertyResolver.java:239)
+	at org.springframework.core.env.AbstractPropertyResolver.resolveRequiredPlaceholders(AbstractPropertyResolver.java:210)
+	at org.springframework.context.support.PropertySourcesPlaceholderConfigurer.lambda$processProperties$0(PropertySourcesPlaceholderConfigurer.java:200)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.resolveEmbeddedValue(AbstractBeanFactory.java:922)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1374)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1353)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:784)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:767)
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:145)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:508)
+	... 22 common frames omitted

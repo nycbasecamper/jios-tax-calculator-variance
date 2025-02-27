@@ -1,0 +1,169 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: jios-taxCalculator-variance
+  annotations:
+    description: "Template to deploy jios-taxCalculator-variance module"
+parameters:
+- description: Application name
+  name: APPLICATION_NAME
+- description: Namespace
+  name: NAMESPACE
+- description: Hostname
+  name: HOSTNAME
+- description: Image tag
+  name: IMAGE_TAG
+- description: Image repository name
+  name: IMAGE_REPO  
+- description: SSL certificate value
+  name: SSL_CERT
+objects: 
+   -    kind: Service
+        apiVersion: v1
+        metadata:
+          name: ${APPLICATION_NAME}
+          namespace: ${NAMESPACE}
+          labels:
+            app: ${APPLICATION_NAME}
+            name: ${APPLICATION_NAME}
+        spec:
+          ports:
+            - protocol: TCP
+              port: 80
+              targetPort: 8080
+          selector:
+            deployment: ${APPLICATION_NAME}
+   -    kind: VirtualService
+        apiVersion: networking.istio.io/v1beta1
+        metadata:
+            name: ${APPLICATION_NAME}
+            namespace: ${NAMESPACE}
+        spec:
+            gateways:
+                - ecm-das-gateway
+            hosts:
+            - ${NAMESPACE}.${HOSTNAME}
+            http:
+                - match:
+                    - port: 443
+                      uri:
+                        prefix: /${APPLICATION_NAME}
+                  route:
+                    - destination:
+                        host: ${APPLICATION_NAME}
+                        port:
+                          number: 80
+   -    kind: VirtualService
+        apiVersion: networking.istio.io/v1beta1
+        metadata:
+            name: ${APPLICATION_NAME}-health
+            namespace: ${NAMESPACE}
+        spec:
+            gateways:
+                - ecm-das-gateway
+            hosts:
+            - ${NAMESPACE}-health.${HOSTNAME}
+            http:
+                - match:
+                    - port: 80
+                      uri:
+                        prefix: /${APPLICATION_NAME}/actuator
+                  route:
+                    - destination:
+                        host: ${APPLICATION_NAME}
+                        port:
+                          number: 80
+   -      kind: HorizontalPodAutoscaler
+          apiVersion: autoscaling/v2
+          metadata:
+            name: ${APPLICATION_NAME}
+            namespace: ${NAMESPACE}
+          spec:
+            behavior:
+              scaleDown:
+                policies:
+                - type: Pods
+                  value: 1
+                  periodSeconds: 60
+              scaleUp:
+                policies:
+                - type: Pods
+                  value: 1
+                  periodSeconds: 60
+            scaleTargetRef:
+              kind: Deployment
+              name: ${APPLICATION_NAME}
+              apiVersion: apps/v1
+            minReplicas: 1
+            maxReplicas: 10
+            metrics:
+              - type: Resource
+                resource:
+                  name: memory
+                  target:
+                    type: Utilization
+                    averageUtilization: 80
+              - type: Resource
+                resource:
+                  name: cpu
+                  target:
+                    type: Utilization
+                    averageUtilization: 80
+   -    kind: Deployment
+        apiVersion: apps/v1
+        metadata:
+          labels:
+            app: ${APPLICATION_NAME}
+            name: ${APPLICATION_NAME}
+          name: ${APPLICATION_NAME}
+          namespace: ${NAMESPACE}
+        spec:
+          progressDeadlineSeconds: 600
+          replicas: 1
+          revisionHistoryLimit: 10
+          selector:
+            matchLabels:
+              deployment: ${APPLICATION_NAME}
+          strategy:
+            rollingUpdate:
+              maxSurge: 25%
+              maxUnavailable: 25%
+            type: RollingUpdate
+          template:
+            metadata:
+              labels:
+                deployment: ${APPLICATION_NAME}
+              annotations:
+                sidecar.istio.io/inject: 'true'                                
+            spec:
+              volumes:
+                - name: ecm-truststore-volume
+                  secret:
+                    secretName: ecm-truststore
+              containers:
+              - image: ${IMAGE_REPO}/ecm/${APPLICATION_NAME}:${IMAGE_TAG}
+                imagePullPolicy: Always
+                name: ${APPLICATION_NAME}
+                env:
+                    - name: SPRING_PROFILES_ACTIVE
+                      value: ${NAMESPACE}
+                ports:
+                - containerPort: 8080
+                  protocol: TCP
+                resources: 
+                  limits:
+                    cpu: 500m
+                    memory: 3Gi
+                  requests:
+                    cpu: 200m
+                    memory: 1000Mi
+                terminationMessagePath: /dev/termination-log
+                terminationMessagePolicy: File
+                volumeMounts:
+                  - name: ecm-truststore-volume
+                    mountPath: /etc/pki/ca-trust/extracted/java
+              dnsPolicy: ClusterFirst
+              restartPolicy: Always
+              schedulerName: default-scheduler
+              securityContext: {}
+              terminationGracePeriodSeconds: 30
